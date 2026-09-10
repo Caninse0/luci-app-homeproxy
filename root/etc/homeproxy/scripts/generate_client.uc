@@ -223,6 +223,9 @@ function generate_endpoint(node) {
 	return endpoint;
 }
 
+/* Direct-node destination override, keyed by node section name */
+let direct_overrides = {};
+
 function generate_outbound(node) {
 	if (type(node) !== 'object' || isEmpty(node))
 		return null;
@@ -782,9 +785,6 @@ if (match(proxy_mode, /tun/))
 /* Outbound start */
 config.endpoints = [];
 
-/* Direct-node destination override, keyed by node section name */
-const direct_overrides = {};
-
 /* Default outbounds */
 config.outbounds = [
 	{
@@ -1191,20 +1191,31 @@ if (!isEmpty(main_node)) {
 }
 
 /* sing-box 1.14: remote rule-sets download via top-level http_clients;
-   replaces the legacy download_detour field everywhere (preset + custom). */
+   replaces the legacy download_detour field everywhere (preset + custom).
+   NOTE: ucode's `delete` does not reliably remove object keys, so we
+   rebuild each rule-set entry to strip download_detour explicitly. */
 const http_clients = [];
 const http_seen = {};
-for (let rs in (config.route.rule_set || [])) {
-	if (rs.type !== 'remote')
+const clean_rule_set = [];
+for (let idx in (config.route?.rule_set || [])) {
+	let rs = config.route.rule_set[idx];
+	if (!rs || rs.type !== 'remote') {
+		push(clean_rule_set, rs);
 		continue;
+	}
 
 	let detour = rs.download_detour;
-	delete rs.download_detour;
 	if (isEmpty(detour))
 		detour = (routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out';
 
 	const tag = 'hp-' + detour;
-	rs.http_client = tag;
+	/* Rebuild without download_detour */
+	let clean_rs = {};
+	for (let k in rs)
+		if (k !== 'download_detour')
+			clean_rs[k] = rs[k];
+	clean_rs.http_client = tag;
+	push(clean_rule_set, clean_rs);
 	if (!http_seen[detour]) {
 		http_seen[detour] = true;
 		/* sing-box 1.14 rejects detouring to an empty direct outbound
@@ -1216,6 +1227,8 @@ for (let rs in (config.route.rule_set || [])) {
 		push(http_clients, client);
 	}
 }
+if (config.route)
+	config.route.rule_set = clean_rule_set;
 if (length(http_clients))
 	config.http_clients = http_clients;
 /* Routing rules end */
