@@ -651,6 +651,32 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		_('Connect through a Hysteria Realm rendezvous service for NAT traversal. When enabled, server address and port fields are ignored.'));
 	o.depends('type', 'hysteria2');
 	o.modalonly = true;
+	o.onchange = function(ev, section_id, value) {
+		let addrEl = this.map.findElement('id', 'cbid.homeproxy.%s.address'.format(section_id));
+		let portEl = this.map.findElement('id', 'cbid.homeproxy.%s.port'.format(section_id));
+		if (value === '1') {
+			addrEl.closest('.cbi-value').style.display = 'none';
+			portEl.closest('.cbi-value').style.display = 'none';
+		} else {
+			addrEl.closest('.cbi-value').style.display = '';
+			portEl.closest('.cbi-value').style.display = '';
+		}
+	}
+	o.validate = function(section_id, _value) {
+		if (section_id) {
+			let type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
+			if (type === 'hysteria2') {
+				let realm = this.map.findElement('id', 'cbid.homeproxy.%s.hysteria_realm'.format(section_id)).firstElementChild;
+				let addrEl = this.map.findElement('id', 'cbid.homeproxy.%s.address'.format(section_id));
+				let portEl = this.map.findElement('id', 'cbid.homeproxy.%s.port'.format(section_id));
+				if (realm.checked) {
+					addrEl.closest('.cbi-value').style.display = 'none';
+					portEl.closest('.cbi-value').style.display = 'none';
+				}
+			}
+		}
+		return true;
+	}
 
 	o = s.option(form.Value, 'hysteria_realm_server_url', _('Realm server URL'));
 	o.depends('hysteria_realm', '1');
