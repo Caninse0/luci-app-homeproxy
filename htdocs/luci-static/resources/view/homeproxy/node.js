@@ -468,32 +468,34 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o = s.option(form.Value, 'address', _('Address'));
 	o.datatype = 'host';
 	o.depends({'type': 'direct', '!reverse': true});
-	o.rmempty = false;
+	o.rmempty = true;
 	o.validate = function(section_id, value) {
 		if (section_id) {
 			let type = this.section.formvalue(section_id, 'type');
 			let realm = this.section.formvalue(section_id, 'hysteria_realm');
+			/* Realm conflicts with server/server_port, skip required check */
 			if (type === 'hysteria2' && realm === '1')
 				return true;
+			if (!value)
+				return _('Expecting: %s').format(_('non-empty value'));
 		}
-		if (section_id && !value)
-			return _('Expecting: %s').format(_('non-empty value'));
 		return true;
 	}
 
 	o = s.option(form.Value, 'port', _('Port'));
 	o.datatype = 'port';
 	o.depends({'type': 'direct', '!reverse': true});
-	o.rmempty = false;
+	o.rmempty = true;
 	o.validate = function(section_id, value) {
 		if (section_id) {
 			let type = this.section.formvalue(section_id, 'type');
 			let realm = this.section.formvalue(section_id, 'hysteria_realm');
+			/* Realm conflicts with server/server_port, skip required check */
 			if (type === 'hysteria2' && realm === '1')
 				return true;
+			if (!value)
+				return _('Expecting: %s').format(_('non-empty value'));
 		}
-		if (section_id && !value)
-			return _('Expecting: %s').format(_('non-empty value'));
 		return true;
 	}
 
