@@ -1232,9 +1232,9 @@ system('mkdir -p ' + RUN_DIR);
 const client_tmp = RUN_DIR + '/sing-box-c.json.tmp';
 writefile(client_tmp, sprintf('%.J\n', removeBlankAttrs(config)));
 /* DEBUG: dump generated config to log for troubleshooting */
-system('echo "=== BEGIN generated config ===" >> ' + RUN_DIR + '/homeproxy.log');
-system('cat ' + client_tmp + ' >> ' + RUN_DIR + '/homeproxy.log');
-system('echo "=== END generated config ===" >> ' + RUN_DIR + '/homeproxy.log');
+/* system('echo "=== BEGIN generated config ===" >> ' + RUN_DIR + '/homeproxy.log'); */
+/* system('cat ' + client_tmp + ' >> ' + RUN_DIR + '/homeproxy.log'); */
+/* system('echo "=== END generated config ===" >> ' + RUN_DIR + '/homeproxy.log'); */
 if (system('/usr/bin/sing-box check --config ' + client_tmp) !== 0) {
 	system('rm -f ' + client_tmp);
 	exit(1);
