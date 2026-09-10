@@ -377,6 +377,18 @@ msgstr "取消"
 msgid "Certificate path"
 msgstr "证书路径"
 
+#: htdocs/luci-static/resources/view/homeproxy/node.js:1155
+msgid "Certificate public key SHA256 (1.13)"
+msgstr "证书公钥 SHA256（1.13）"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:1156
+#: htdocs/luci-static/resources/view/homeproxy/server.js:612
+msgid ""
+"List of SHA-256 hashes of server certificate public keys, in base64 format. "
+"Used for certificate pinning."
+msgstr ""
+"服务器证书公钥的 SHA-256 哈希列表，base64 格式。用于证书钉扎。"
+
 #: htdocs/luci-static/resources/view/homeproxy/status.js:57
 msgid "Check"
 msgstr "检查"
@@ -895,6 +907,35 @@ msgstr "启用邻居解析，使规则可按主机名匹配局域网设备（1.1
 #: htdocs/luci-static/resources/view/homeproxy/server.js:523
 msgid "Enable padding"
 msgstr "启用填充"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:685
+#: htdocs/luci-static/resources/view/homeproxy/server.js:335
+msgid "Enable port mapping"
+msgstr "启用端口映射"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:686
+#: htdocs/luci-static/resources/view/homeproxy/server.js:336
+msgid ""
+"Maintain a UDP port mapping on the local gateway via UPnP or NAT-PMP."
+msgstr "通过 UPnP 或 NAT-PMP 在本地网关维护 UDP 端口映射。"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:655
+#: htdocs/luci-static/resources/view/homeproxy/server.js:322
+msgid "Enable Realm (1.14)"
+msgstr "启用 Realm（1.14）"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:656
+msgid ""
+"Connect through a Hysteria Realm rendezvous service for NAT traversal. "
+"When enabled, server address and port fields are ignored."
+msgstr ""
+"通过 Hysteria Realm 中继服务进行 NAT 穿透。启用后，服务器地址和端口字段将被忽略。"
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:323
+msgid ""
+"Register this inbound to a Hysteria Realm rendezvous service for NAT "
+"traversal."
+msgstr "将此入站注册到 Hysteria Realm 中继服务以实现 NAT 穿透。"
 
 #: htdocs/luci-static/resources/view/homeproxy/server.js:885
 msgid "Enable tcp fast open for listener."
@@ -2095,6 +2136,26 @@ msgstr "端口跳跃间隔（单位：秒）。"
 msgid "Port range"
 msgstr "端口范围"
 
+#: htdocs/luci-static/resources/view/homeproxy/node.js:690
+#: htdocs/luci-static/resources/view/homeproxy/server.js:348
+msgid "Port mapping lifetime"
+msgstr "端口映射生存期"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:691
+#: htdocs/luci-static/resources/view/homeproxy/server.js:349
+msgid "Lease lifetime of the mapping; it is renewed at half the lifetime."
+msgstr "映射的租约生存期；在生存期一半时续期。"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:688
+#: htdocs/luci-static/resources/view/homeproxy/server.js:340
+msgid "Port mapping timeout"
+msgstr "端口映射超时"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:689
+#: htdocs/luci-static/resources/view/homeproxy/server.js:341
+msgid "Timeout for gateway discovery and mapping operations."
+msgstr "网关发现和映射操作的超时时间。"
+
 #: htdocs/luci-static/resources/view/homeproxy/node.js:957
 msgid "Pre-shared key"
 msgstr "预共享密钥"
@@ -2276,6 +2337,35 @@ msgstr "检测到递归出站！"
 msgid "Recursive resolver detected!"
 msgstr "检测到递归解析器！"
 
+#: htdocs/luci-static/resources/view/homeproxy/node.js:673
+#: htdocs/luci-static/resources/view/homeproxy/server.js:343
+msgid "Realm ID"
+msgstr "Realm ID"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:674
+#: htdocs/luci-static/resources/view/homeproxy/server.js:344
+msgid "Slot identifier on the realm. Must match the server."
+msgstr "Realm 上的槽位标识符。必须与服务端匹配。"
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:345
+msgid "Slot identifier on the realm. 1-64 characters."
+msgstr "Realm 上的槽位标识符。1-64 个字符。"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:662
+#: htdocs/luci-static/resources/view/homeproxy/server.js:328
+msgid "Realm server URL"
+msgstr "Realm 服务器 URL"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:666
+#: htdocs/luci-static/resources/view/homeproxy/server.js:332
+msgid "Realm token"
+msgstr "Realm 令牌"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:667
+#: htdocs/luci-static/resources/view/homeproxy/server.js:333
+msgid "Bearer token for the realm."
+msgstr "Realm 的 Bearer 令牌。"
+
 #: htdocs/luci-static/resources/view/homeproxy/client.js:285
 msgid "Redirect TCP"
 msgstr "Redirect TCP"
@@ -2452,6 +2542,25 @@ msgstr "SSH"
 #: htdocs/luci-static/resources/view/homeproxy/client.js:1205
 msgid "STUN"
 msgstr "STUN"
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:355
+msgid "STUN domain resolver"
+msgstr "STUN 域名解析器"
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:356
+msgid ""
+"Domain resolver for STUN server domain names. Leave empty to use default."
+msgstr "STUN 服务器域名的解析器。留空使用默认值。"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:678
+#: htdocs/luci-static/resources/view/homeproxy/server.js:353
+msgid "STUN servers"
+msgstr "STUN 服务器"
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:679
+#: htdocs/luci-static/resources/view/homeproxy/server.js:354
+msgid "List of STUN servers used to discover public addresses."
+msgstr "用于发现公网地址的 STUN 服务器列表。"
 
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1263
 msgid "SUoT version"

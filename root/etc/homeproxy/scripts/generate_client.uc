@@ -271,6 +271,19 @@ function generate_outbound(node) {
 		/* sing-box 1.14: Hysteria2 QUIC params (Hysteria v1 recv-window tuning removed upstream) */
 		bbr_profile: (node.type === 'hysteria2') ? (node.hysteria_bbr_profile || null) : null,
 		disable_chrome_parrot: (node.type === 'hysteria2' && node.hysteria_disable_chrome_parrot === '1') ? true : null,
+		/* sing-box 1.14: Hysteria2 Realm (NAT traversal via rendezvous service) */
+		realm: (node.type === 'hysteria2' && node.hysteria_realm === '1') ? {
+			server_url: node.hysteria_realm_server_url,
+			token: node.hysteria_realm_token,
+			realm_id: node.hysteria_realm_realm_id,
+			stun_servers: node.hysteria_realm_stun_servers,
+			ip_version: strToInt(node.hysteria_realm_ip_version),
+			port_mapping: (node.hysteria_realm_port_mapping === '1') ? {
+				enabled: true,
+				timeout: strToTime(node.hysteria_realm_port_mapping_timeout),
+				lifetime: strToTime(node.hysteria_realm_port_mapping_lifetime)
+			} : null
+		} : null,
 		/* Shadowsocks */
 		method: node.shadowsocks_encrypt_method,
 		plugin: node.shadowsocks_plugin,
@@ -321,6 +334,7 @@ function generate_outbound(node) {
 			handshake_timeout: strToTime(node.tls_handshake_timeout),
 			cipher_suites: node.tls_cipher_suites,
 			certificate_path: node.tls_cert_path,
+			certificate_public_key_sha256: node.tls_certificate_pubkey_sha256,
 			ech: (node.tls_ech === '1') ? {
 				enabled: true,
 				config: node.tls_ech_config,

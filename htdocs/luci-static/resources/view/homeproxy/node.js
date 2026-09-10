@@ -645,6 +645,63 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		_('Disable Chrome QUIC handshake parroting, which is enabled by default since sing-box 1.14. Turn this on only when the server uses an Ed25519 certificate or the handshake otherwise fails.'));
 	o.depends('type', 'hysteria2');
 	o.modalonly = true;
+
+	/* Hysteria2 Realm config start */
+	o = s.option(form.Flag, 'hysteria_realm', _('Enable Realm (1.14)'),
+		_('Connect through a Hysteria Realm rendezvous service for NAT traversal. When enabled, server address and port fields are ignored.'));
+	o.depends('type', 'hysteria2');
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'hysteria_realm_server_url', _('Realm server URL'));
+	o.depends('hysteria_realm', '1');
+	o.rmempty = false;
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'hysteria_realm_token', _('Realm token'),
+		_('Bearer token for the realm.'));
+	o.password = true;
+	o.depends('hysteria_realm', '1');
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'hysteria_realm_realm_id', _('Realm ID'),
+		_('Slot identifier on the realm. Must match the server.'));
+	o.depends('hysteria_realm', '1');
+	o.rmempty = false;
+	o.modalonly = true;
+
+	o = s.option(form.DynamicList, 'hysteria_realm_stun_servers', _('STUN servers'),
+		_('List of STUN servers used to discover public addresses.'));
+	o.depends('hysteria_realm', '1');
+	o.rmempty = false;
+	o.modalonly = true;
+
+	o = s.option(form.ListValue, 'hysteria_realm_ip_version', _('IP version'));
+	o.value('', _('Both'));
+	o.value('4', _('IPv4 only'));
+	o.value('6', _('IPv6 only'));
+	o.depends('hysteria_realm', '1');
+	o.modalonly = true;
+
+	o = s.option(form.Flag, 'hysteria_realm_port_mapping', _('Enable port mapping'),
+		_('Maintain a UDP port mapping on the local gateway via UPnP or NAT-PMP.'));
+	o.depends('hysteria_realm', '1');
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'hysteria_realm_port_mapping_timeout', _('Port mapping timeout'),
+		_('Timeout for gateway discovery and mapping operations.'));
+	o.datatype = 'uinteger';
+	o.placeholder = '10';
+	o.depends('hysteria_realm_port_mapping', '1');
+	o.modalonly = true;
+
+	o = s.option(form.Value, 'hysteria_realm_port_mapping_lifetime', _('Port mapping lifetime'),
+		_('Lease lifetime of the mapping; it is renewed at half the lifetime.'));
+	o.datatype = 'uinteger';
+	o.placeholder = '600';
+	o.depends('hysteria_realm_port_mapping', '1');
+	o.modalonly = true;
+	/* Hysteria2 Realm config end */
+
 	/* Hysteria (2) config end */
 
 	/* Shadowsocks config start */
@@ -1146,6 +1203,11 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 		o.value(i);
 	o.depends('tls', '1');
 	o.optional = true;
+	o.modalonly = true;
+
+	o = s.option(form.DynamicList, 'tls_certificate_pubkey_sha256', _('Certificate public key SHA256 (1.13)'),
+		_('List of SHA-256 hashes of server certificate public keys, in base64 format. Used for certificate pinning.'));
+	o.depends('tls', '1');
 	o.modalonly = true;
 
 	o = s.option(form.Value, 'tls_handshake_timeout', _('Handshake timeout (1.14)'),

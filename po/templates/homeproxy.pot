@@ -360,6 +360,17 @@ msgstr ""
 msgid "Certificate path"
 msgstr ""
 
+#: htdocs/luci-static/resources/view/homeproxy/node.js:1155
+msgid "Certificate public key SHA256 (1.13)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:1156
+#: htdocs/luci-static/resources/view/homeproxy/server.js:612
+msgid ""
+"List of SHA-256 hashes of server certificate public keys, in base64 format. "
+"Used for certificate pinning."
+msgstr ""
+
 #: htdocs/luci-static/resources/view/homeproxy/status.js:57
 msgid "Check"
 msgstr ""
@@ -858,6 +869,102 @@ msgstr ""
 #: htdocs/luci-static/resources/view/homeproxy/node.js:1019
 #: htdocs/luci-static/resources/view/homeproxy/server.js:523
 msgid "Enable padding"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:685
+#: htdocs/luci-static/resources/view/homeproxy/server.js:335
+msgid "Enable port mapping"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:686
+#: htdocs/luci-static/resources/view/homeproxy/server.js:336
+msgid ""
+"Maintain a UDP port mapping on the local gateway via UPnP or NAT-PMP."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:655
+#: htdocs/luci-static/resources/view/homeproxy/server.js:322
+msgid "Enable Realm (1.14)"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:656
+msgid ""
+"Connect through a Hysteria Realm rendezvous service for NAT traversal. "
+"When enabled, server address and port fields are ignored."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:323
+msgid ""
+"Register this inbound to a Hysteria Realm rendezvous service for NAT "
+"traversal."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:667
+#: htdocs/luci-static/resources/view/homeproxy/server.js:333
+msgid "Bearer token for the realm."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:356
+msgid ""
+"Domain resolver for STUN server domain names. Leave empty to use default."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:691
+#: htdocs/luci-static/resources/view/homeproxy/server.js:349
+msgid "Lease lifetime of the mapping; it is renewed at half the lifetime."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:679
+#: htdocs/luci-static/resources/view/homeproxy/server.js:354
+msgid "List of STUN servers used to discover public addresses."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:690
+#: htdocs/luci-static/resources/view/homeproxy/server.js:348
+msgid "Port mapping lifetime"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:688
+#: htdocs/luci-static/resources/view/homeproxy/server.js:340
+msgid "Port mapping timeout"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:673
+#: htdocs/luci-static/resources/view/homeproxy/server.js:343
+msgid "Realm ID"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:674
+#: htdocs/luci-static/resources/view/homeproxy/server.js:344
+msgid "Slot identifier on the realm. Must match the server."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:345
+msgid "Slot identifier on the realm. 1-64 characters."
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:662
+#: htdocs/luci-static/resources/view/homeproxy/server.js:328
+msgid "Realm server URL"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:666
+#: htdocs/luci-static/resources/view/homeproxy/server.js:332
+msgid "Realm token"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/server.js:355
+msgid "STUN domain resolver"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:678
+#: htdocs/luci-static/resources/view/homeproxy/server.js:353
+msgid "STUN servers"
+msgstr ""
+
+#: htdocs/luci-static/resources/view/homeproxy/node.js:689
+#: htdocs/luci-static/resources/view/homeproxy/server.js:341
+msgid "Timeout for gateway discovery and mapping operations."
 msgstr ""
 
 #: htdocs/luci-static/resources/view/homeproxy/server.js:885

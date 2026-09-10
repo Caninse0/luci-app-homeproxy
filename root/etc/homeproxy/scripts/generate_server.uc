@@ -91,6 +91,21 @@ uci.foreach(uciconfig, uciserver, (cfg) => {
 		ignore_client_bandwidth: strToBool(cfg.hysteria_ignore_client_bandwidth),
 		masquerade: cfg.hysteria_masquerade,
 
+		/* sing-box 1.14: Hysteria2 Realm (NAT traversal via rendezvous service) */
+		realm: (cfg.type === 'hysteria2' && cfg.hysteria_realm === '1') ? {
+			server_url: cfg.hysteria_realm_server_url,
+			token: cfg.hysteria_realm_token,
+			realm_id: cfg.hysteria_realm_realm_id,
+			stun_servers: cfg.hysteria_realm_stun_servers,
+			stun_domain_resolver: cfg.hysteria_realm_stun_domain_resolver,
+			ip_version: strToInt(cfg.hysteria_realm_ip_version),
+			port_mapping: (cfg.hysteria_realm_port_mapping === '1') ? {
+				enabled: true,
+				timeout: strToTime(cfg.hysteria_realm_port_mapping_timeout),
+				lifetime: strToTime(cfg.hysteria_realm_port_mapping_lifetime)
+			} : null
+		} : null,
+
 		/* Shadowsocks */
 		method: (cfg.type === 'shadowsocks') ? cfg.shadowsocks_encrypt_method : null,
 		password: (cfg.type in ['shadowsocks', 'shadowtls']) ? cfg.password : null,

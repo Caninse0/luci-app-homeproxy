@@ -323,6 +323,68 @@ return view.extend({
 			_('HTTP3 server behavior when authentication fails.<br/>A 404 page will be returned if empty.'));
 		o.depends('type', 'hysteria2');
 		o.modalonly = true;
+
+		/* Hysteria2 Realm config start */
+		o = s.option(form.Flag, 'hysteria_realm', _('Enable Realm (1.14)'),
+			_('Register this inbound to a Hysteria Realm rendezvous service for NAT traversal.'));
+		o.depends('type', 'hysteria2');
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_server_url', _('Realm server URL'));
+		o.depends('hysteria_realm', '1');
+		o.rmempty = false;
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_token', _('Realm token'),
+			_('Bearer token for the realm.'));
+		o.password = true;
+		o.depends('hysteria_realm', '1');
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_realm_id', _('Realm ID'),
+			_('Slot identifier on the realm. 1-64 characters.'));
+		o.depends('hysteria_realm', '1');
+		o.rmempty = false;
+		o.modalonly = true;
+
+		o = s.option(form.DynamicList, 'hysteria_realm_stun_servers', _('STUN servers'),
+			_('List of STUN servers used to discover public addresses.'));
+		o.depends('hysteria_realm', '1');
+		o.rmempty = false;
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_stun_domain_resolver', _('STUN domain resolver'),
+			_('Domain resolver for STUN server domain names. Leave empty to use default.'));
+		o.depends('hysteria_realm', '1');
+		o.modalonly = true;
+
+		o = s.option(form.ListValue, 'hysteria_realm_ip_version', _('IP version'));
+		o.value('', _('Both'));
+		o.value('4', _('IPv4 only'));
+		o.value('6', _('IPv6 only'));
+		o.depends('hysteria_realm', '1');
+		o.modalonly = true;
+
+		o = s.option(form.Flag, 'hysteria_realm_port_mapping', _('Enable port mapping'),
+			_('Maintain a UDP port mapping on the local gateway via UPnP or NAT-PMP.'));
+		o.depends('hysteria_realm', '1');
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_port_mapping_timeout', _('Port mapping timeout'),
+			_('Timeout for gateway discovery and mapping operations.'));
+		o.datatype = 'uinteger';
+		o.placeholder = '10';
+		o.depends('hysteria_realm_port_mapping', '1');
+		o.modalonly = true;
+
+		o = s.option(form.Value, 'hysteria_realm_port_mapping_lifetime', _('Port mapping lifetime'),
+			_('Lease lifetime of the mapping; it is renewed at half the lifetime.'));
+		o.datatype = 'uinteger';
+		o.placeholder = '600';
+		o.depends('hysteria_realm_port_mapping', '1');
+		o.modalonly = true;
+		/* Hysteria2 Realm config end */
+
 		/* Hysteria (2) config end */
 
 		/* Snell config start */
