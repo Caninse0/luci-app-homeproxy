@@ -1199,33 +1199,29 @@ const http_seen = {};
 const clean_rule_set = [];
 for (let idx in (config.route?.rule_set || [])) {
 	let rs = config.route.rule_set[idx];
-	if (!rs || rs.type !== 'remote') {
-		push(clean_rule_set, rs);
-		continue;
-	}
+	if (!rs) continue;
 
-	let detour = rs.download_detour;
-	if (isEmpty(detour))
-		detour = (routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out';
-
-	const tag = 'hp-' + detour;
-	/* Rebuild without download_detour */
+	/* Rebuild every rule-set to strip download_detour (removed in sing-box 1.14) */
 	let clean_rs = {};
 	for (let k in rs)
 		if (k !== 'download_detour')
 			clean_rs[k] = rs[k];
-	clean_rs.http_client = tag;
-	push(clean_rule_set, clean_rs);
-	if (!http_seen[detour]) {
-		http_seen[detour] = true;
-		/* sing-box 1.14 rejects detouring to an empty direct outbound
-		   (pure TUN mode has no self_mark on direct-out). Omitting detour
-		   uses the same system direct dialer, so behavior is unchanged. */
-		const client = { tag: tag };
-		if (!(isEmpty(self_mark) && isDirectOutboundTag(detour)))
-			client.detour = detour;
-		push(http_clients, client);
+
+	if (rs.type === 'remote') {
+		let detour = rs.download_detour;
+		if (isEmpty(detour))
+			detour = (routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out';
+		const tag = 'hp-' + detour;
+		clean_rs.http_client = tag;
+		if (!http_seen[detour]) {
+			http_seen[detour] = true;
+			const client = { tag: tag };
+			if (!(isEmpty(self_mark) && isDirectOutboundTag(detour)))
+				client.detour = detour;
+			push(http_clients, client);
+		}
 	}
+	push(clean_rule_set, clean_rs);
 }
 if (config.route)
 	config.route.rule_set = clean_rule_set;
@@ -1250,6 +1246,10 @@ config['$schema'] = 'https://sing-box.sagernet.org/schema.json';
 system('mkdir -p ' + RUN_DIR);
 const client_tmp = RUN_DIR + '/sing-box-c.json.tmp';
 writefile(client_tmp, sprintf('%.J\n', removeBlankAttrs(config)));
+/* DEBUG: dump generated config to log for troubleshooting */
+system('echo "=== BEGIN generated config ===" >> ' + RUN_DIR + '/homeproxy.log');
+system('cat ' + client_tmp + ' >> ' + RUN_DIR + '/homeproxy.log');
+system('echo "=== END generated config ===" >> ' + RUN_DIR + '/homeproxy.log');
 if (system('/usr/bin/sing-box check --config ' + client_tmp) !== 0) {
 	system('rm -f ' + client_tmp);
 	exit(1);
