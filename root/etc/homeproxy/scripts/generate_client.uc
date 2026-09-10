@@ -1037,7 +1037,7 @@ if (!isEmpty(main_node)) {
 			format: 'binary',
 			url: 'https://fastly.jsdelivr.net/gh/SagerNet/sing-geoip@rule-set/geoip-cn.srs',
 			update_interval: '24h',
-			download_detour: 'direct-out'
+			http_client: 'hp-direct-out'
 		});
 		push(config.route.rule_set, {
 			type: 'remote',
@@ -1045,7 +1045,7 @@ if (!isEmpty(main_node)) {
 			format: 'binary',
 			url: 'https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-cn.srs',
 			update_interval: '24h',
-			download_detour: 'direct-out'
+			http_client: 'hp-direct-out'
 		});
 		push(config.route.rule_set, {
 			type: 'remote',
@@ -1053,7 +1053,7 @@ if (!isEmpty(main_node)) {
 			format: 'binary',
 			url: 'https://fastly.jsdelivr.net/gh/SagerNet/sing-geosite@rule-set/geosite-geolocation-!cn.srs',
 			update_interval: '24h',
-			download_detour: 'direct-out'
+			http_client: 'hp-direct-out'
 		});
 	}
 
@@ -1175,13 +1175,16 @@ if (!isEmpty(main_node)) {
 				warn(sprintf("homeproxy: rule-set '%s' uses extra tags but its %s source lacks a {tag} placeholder.", cfg['.name'], cfg.type));
 		}
 
+		const detour = cfg.type === 'remote' ? (get_outbound(cfg.outbound) || get_outbound(default_outbound)) : null;
+		const http_tag = cfg.type === 'remote' ? ('hp-' + (isEmpty(detour) ? ((routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out') : detour)) : null;
+
 		const ruleset = {
 			type: cfg.type,
 			tag: rs_tag,
 			format: cfg.format,
 			path: cfg.path,
 			url: cfg.url,
-			download_detour: get_outbound(cfg.outbound) || get_outbound(default_outbound),
+			http_client: http_tag,
 			update_interval: cfg.update_interval
 		};
 		if (cfg.type === 'remote' && !isEmpty(cfg.initial_path))
@@ -1190,34 +1193,22 @@ if (!isEmpty(main_node)) {
 	});
 }
 
-/* sing-box 1.14: remote rule-sets download via top-level http_clients;
-   replaces the legacy download_detour field everywhere (preset + custom).
-   In-place mutation: set download_detour to null for every rule-set so that
-   removeBlankAttrs strips it from the final JSON, and build http_clients for
-   remote rule-sets. */
+/* sing-box 1.14: build top-level http_clients from all remote rule-sets */
 const http_clients = [];
 const http_seen = {};
 const _rule_set = config.route?.rule_set || [];
 for (let idx in _rule_set) {
 	let rs = _rule_set[idx];
-	if (!rs) continue;
+	if (!rs || rs.type !== 'remote' || isEmpty(rs.http_client)) continue;
 
-	if (rs.type === 'remote') {
-		let detour = rs.download_detour;
-		if (isEmpty(detour))
-			detour = (routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out';
-		const tag = 'hp-' + detour;
-		rs.http_client = tag;
-		if (!http_seen[detour]) {
-			http_seen[detour] = true;
-			const client = { tag: tag };
-			if (!(isEmpty(self_mark) && isDirectOutboundTag(detour)))
-				client.detour = detour;
-			push(http_clients, client);
-		}
+	const detour_tag = rs.http_client.replace(/^hp-/, '');
+	if (!http_seen[detour_tag]) {
+		http_seen[detour_tag] = true;
+		const client = { tag: rs.http_client };
+		if (!(isEmpty(self_mark) && isDirectOutboundTag(detour_tag)))
+			client.detour = detour_tag;
+		push(http_clients, client);
 	}
-	/* Strip legacy field — removeBlankAttrs will drop null values */
-	rs.download_detour = null;
 }
 if (length(http_clients))
 	config.http_clients = http_clients;
