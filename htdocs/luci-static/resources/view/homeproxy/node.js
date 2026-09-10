@@ -469,11 +469,33 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o.datatype = 'host';
 	o.depends({'type': 'direct', '!reverse': true});
 	o.rmempty = false;
+	o.validate = function(section_id, value) {
+		if (section_id) {
+			let type = this.section.formvalue(section_id, 'type');
+			let realm = this.section.formvalue(section_id, 'hysteria_realm');
+			if (type === 'hysteria2' && realm === '1')
+				return true;
+		}
+		if (section_id && !value)
+			return _('Expecting: %s').format(_('non-empty value'));
+		return true;
+	}
 
 	o = s.option(form.Value, 'port', _('Port'));
 	o.datatype = 'port';
 	o.depends({'type': 'direct', '!reverse': true});
 	o.rmempty = false;
+	o.validate = function(section_id, value) {
+		if (section_id) {
+			let type = this.section.formvalue(section_id, 'type');
+			let realm = this.section.formvalue(section_id, 'hysteria_realm');
+			if (type === 'hysteria2' && realm === '1')
+				return true;
+		}
+		if (section_id && !value)
+			return _('Expecting: %s').format(_('non-empty value'));
+		return true;
+	}
 
 	o = s.option(form.Value, 'username', _('Username'));
 	o.depends('type', 'http');
@@ -550,7 +572,15 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 	o = s.option(form.DynamicList, 'hysteria_hopping_port', _('Hopping port'));
 	o.depends('type', 'hysteria');
 	o.depends('type', 'hysteria2');
-	o.validate = hp.validatePortRange;
+	o.validate = function(section_id, value) {
+		if (section_id) {
+			let type = this.section.formvalue(section_id, 'type');
+			let realm = this.section.formvalue(section_id, 'hysteria_realm');
+			if (type === 'hysteria2' && realm === '1')
+				return true;
+		}
+		return hp.validatePortRange.call(this, section_id, value);
+	}
 	o.modalonly = true;
 
 	o = s.option(form.Value, 'hysteria_hop_interval', _('Hop interval'),
@@ -648,30 +678,38 @@ function renderNodeSettings(section, data, features, main_node, routing_mode) {
 
 	/* Hysteria2 Realm config start */
 	o = s.option(form.Flag, 'hysteria_realm', _('Enable Realm (1.14)'),
-		_('Connect through a Hysteria Realm rendezvous service for NAT traversal. When enabled, server address and port fields are ignored.'));
+		_('Connect through a Hysteria Realm rendezvous service for NAT traversal. When enabled, server address, port and hopping port fields are ignored.'));
 	o.depends('type', 'hysteria2');
 	o.modalonly = true;
 	o.onchange = function(ev, section_id, value) {
-		let addrEl = this.map.findElement('id', 'cbid.homeproxy.%s.address'.format(section_id));
-		let portEl = this.map.findElement('id', 'cbid.homeproxy.%s.port'.format(section_id));
-		if (value === '1') {
-			addrEl.closest('.cbi-value').style.display = 'none';
-			portEl.closest('.cbi-value').style.display = 'none';
-		} else {
-			addrEl.closest('.cbi-value').style.display = '';
-			portEl.closest('.cbi-value').style.display = '';
-		}
+		let toggleField = (id, hidden) => {
+			let el = this.map.findElement('id', id);
+			if (el) {
+				let row = el.closest('.cbi-value');
+				if (row) row.style.display = hidden ? 'none' : '';
+			}
+		};
+		let hidden = (value === '1');
+		toggleField('cbid.homeproxy.%s.address'.format(section_id), hidden);
+		toggleField('cbid.homeproxy.%s.port'.format(section_id), hidden);
+		toggleField('cbid.homeproxy.%s.hysteria_hopping_port'.format(section_id), hidden);
 	}
 	o.validate = function(section_id, _value) {
 		if (section_id) {
 			let type = this.map.lookupOption('type', section_id)[0].formvalue(section_id);
 			if (type === 'hysteria2') {
 				let realm = this.map.findElement('id', 'cbid.homeproxy.%s.hysteria_realm'.format(section_id)).firstElementChild;
-				let addrEl = this.map.findElement('id', 'cbid.homeproxy.%s.address'.format(section_id));
-				let portEl = this.map.findElement('id', 'cbid.homeproxy.%s.port'.format(section_id));
 				if (realm.checked) {
-					addrEl.closest('.cbi-value').style.display = 'none';
-					portEl.closest('.cbi-value').style.display = 'none';
+					let toggleField = (id) => {
+						let el = this.map.findElement('id', id);
+						if (el) {
+							let row = el.closest('.cbi-value');
+							if (row) row.style.display = 'none';
+						}
+					};
+					toggleField('cbid.homeproxy.%s.address'.format(section_id));
+					toggleField('cbid.homeproxy.%s.port'.format(section_id));
+					toggleField('cbid.homeproxy.%s.hysteria_hopping_port'.format(section_id));
 				}
 			}
 		}
