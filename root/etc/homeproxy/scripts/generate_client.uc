@@ -1192,27 +1192,22 @@ if (!isEmpty(main_node)) {
 
 /* sing-box 1.14: remote rule-sets download via top-level http_clients;
    replaces the legacy download_detour field everywhere (preset + custom).
-   NOTE: ucode's `delete` does not reliably remove object keys, so we
-   rebuild each rule-set entry to strip download_detour explicitly. */
+   In-place mutation: set download_detour to null for every rule-set so that
+   removeBlankAttrs strips it from the final JSON, and build http_clients for
+   remote rule-sets. */
 const http_clients = [];
 const http_seen = {};
-const clean_rule_set = [];
-for (let idx in (config.route?.rule_set || [])) {
-	let rs = config.route.rule_set[idx];
+const _rule_set = config.route?.rule_set || [];
+for (let idx in _rule_set) {
+	let rs = _rule_set[idx];
 	if (!rs) continue;
-
-	/* Rebuild every rule-set to strip download_detour (removed in sing-box 1.14) */
-	let clean_rs = {};
-	for (let k in rs)
-		if (k !== 'download_detour')
-			clean_rs[k] = rs[k];
 
 	if (rs.type === 'remote') {
 		let detour = rs.download_detour;
 		if (isEmpty(detour))
 			detour = (routing_mode === 'custom') ? (get_outbound(default_outbound) || 'direct-out') : 'direct-out';
 		const tag = 'hp-' + detour;
-		clean_rs.http_client = tag;
+		rs.http_client = tag;
 		if (!http_seen[detour]) {
 			http_seen[detour] = true;
 			const client = { tag: tag };
@@ -1221,10 +1216,9 @@ for (let idx in (config.route?.rule_set || [])) {
 			push(http_clients, client);
 		}
 	}
-	push(clean_rule_set, clean_rs);
+	/* Strip legacy field — removeBlankAttrs will drop null values */
+	rs.download_detour = null;
 }
-if (config.route)
-	config.route.rule_set = clean_rule_set;
 if (length(http_clients))
 	config.http_clients = http_clients;
 /* Routing rules end */
